@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book a Room - Escape Room Management</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1 class="glitch-flicker">BOOK A ROOM</h1>
+  <p class="subtitle">Register the team and reserve a room before starting the game.</p>
+
+  <div class="panel">
+    <form id="bookingForm">
+      <div class="form-row">
+        <label>
+          Full Name
+          <input id="customerName" class="form-input" type="text" placeholder="Jane Doe" required>
+        </label>
+        <label>
+          Email Address
+          <input id="customerEmail" class="form-input" type="email" placeholder="jane.doe@example.com" required>
+        </label>
+      </div>
+
+      <div class="form-row">
+        <label>
+          Room Theme
+          <select id="roomTheme" class="form-input" required>
+            <option value="">Select Room Theme</option>
+            <option value="cryptic">The Cryptic Library</option>
+            <option value="asylum">Abandoned Asylum</option>
+            <option value="quantum">Quantum Laboratory</option>
+            <option value="pharaoh">Pharaoh's Tomb</option>
+            <option value="bunker">Cold War Bunker</option>
+            <option value="market">The Black Market</option>
+          </select>
+        </label>
+        <label>
+          Players
+          <select id="playerCount" class="form-input" required>
+            <option value="">Players (2-6)</option>
+            <option value="2">2 Players</option>
+            <option value="3">3 Players</option>
+            <option value="4">4 Players</option>
+            <option value="5">5 Players</option>
+            <option value="6">6 Players</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-row">
+        <label>
+          Booking Date
+          <input id="bookingDate" class="form-input" type="date" required>
+        </label>
+        <label>
+          Start Time
+          <select id="bookingTime" class="form-input" required>
+            <option value="">Select Time</option>
+            <option value="10:00">10:00 AM</option>
+            <option value="14:00">2:00 PM</option>
+            <option value="18:00">6:00 PM</option>
+          </select>
+        </label>
+      </div>
+
+      <button type="submit" class="button primary">Confirm Booking</button>
+    </form>
+  </div>
+
+  <div class="back-link">
+    <a href="index.html" class="button secondary">← Back to Home</a>
+  </div>
+
+  <script src="escape-room.js"></script>
+  <script>
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Get form data by element ID for clear, stable logic
+      const name = document.getElementById('customerName').value;
+      const email = document.getElementById('customerEmail').value;
+      const room = document.getElementById('roomTheme').selectedOptions[0].text;
+      const roomTheme = document.getElementById('roomTheme').value;
+      const players = document.getElementById('playerCount').selectedOptions[0].text;
+      const playerCount = document.getElementById('playerCount').value;
+      const date = document.getElementById('bookingDate').value;
+      const time = document.getElementById('bookingTime').selectedOptions[0].text;
+
+      // Add visual feedback
+      const button = this.querySelector('.button');
+      button.style.animation = 'none';
+      setTimeout(() => {
+        button.style.animation = 'pulse 0.5s ease-in-out';
+      }, 10);
+
+      // Register the game with new system
+      const bookingData = {
+        customerName: name,
+        customerEmail: email,
+        room: room,
+        roomTheme: roomTheme,
+        players: players,
+        playerCount: playerCount,
+        date: date,
+        time: time
+      };
+      
+      const registeredGame = gameRegistry.registerGame(bookingData);
+
+      // Set active booking flag and store latest booking summary
+      localStorage.setItem('activeBookings', 'true');
+      localStorage.setItem('latestBooking', JSON.stringify({ name, email, room, players, date, time }));
+
+      setTimeout(() => {
+        alert(`✓ Booking confirmed!\n\nTeam: ${name}\nRoom: ${room}\nPlayers: ${players}\nDate: ${date}\nTime: ${time}\n\nGame is now registered and being tracked!`);
+        document.getElementById('bookingForm').reset();
+      }, 300);
+    });
+  </script>
+</body>
+</html>

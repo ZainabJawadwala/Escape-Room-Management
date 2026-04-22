@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Escape Room Management</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1 class="glitch-flicker">MANAGE PUZZLES</h1>
+  <p class="subtitle">Control room readiness and puzzle flow after booking is complete.</p>
+
+  <div class="warning-box" id="accessWarning" style="display: none;">
+    <p>Booking not found. Please book a room first to access puzzle management.</p>
+    <a href="book.html" class="button secondary">Book Now</a>
+  </div>
+
+  <div class="panel">
+    <div class="puzzle-controls">
+      <div class="control-section">
+        <h3>Room Controls</h3>
+        <p class="section-description">Choose a room to manage, then use the controls below to prepare it for the next team.</p>
+        <label for="roomSelect">Select Room:</label>
+        <select id="roomSelect" class="form-input">
+          <option value="">Choose a room...</option>
+          <option value="cryptic">The Cryptic Library</option>
+          <option value="asylum">Abandoned Asylum</option>
+          <option value="quantum">Quantum Laboratory</option>
+          <option value="pharaoh">Pharaoh's Tomb</option>
+          <option value="bunker">Cold War Bunker</option>
+          <option value="market">The Black Market</option>
+        </select>
+        <div class="room-actions">
+          <button class="button" onclick="resetRoom()">Reset Room</button>
+          <button class="button" onclick="lockRoom()">Lock Room</button>
+          <button class="button" onclick="unlockRoom()">Unlock Room</button>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <h3>Puzzle Management</h3>
+        <p class="section-description">Control individual puzzles for the selected room. Turn them on/off to guide the team's progress.</p>
+        <div class="puzzle-list">
+          <div class="puzzle-item">
+            <div class="puzzle-info">
+              <span class="puzzle-name">Puzzle 1: Code Lock</span>
+              <span class="puzzle-status inactive" id="status1">Inactive</span>
+            </div>
+            <div class="puzzle-actions">
+              <button class="button small" onclick="activatePuzzle(1)">Activate</button>
+              <button class="button small" onclick="deactivatePuzzle(1)">Deactivate</button>
+            </div>
+          </div>
+          <div class="puzzle-item">
+            <div class="puzzle-info">
+              <span class="puzzle-name">Puzzle 2: Hidden Key</span>
+              <span class="puzzle-status inactive" id="status2">Inactive</span>
+            </div>
+            <div class="puzzle-actions">
+              <button class="button small" onclick="activatePuzzle(2)">Activate</button>
+              <button class="button small" onclick="deactivatePuzzle(2)">Deactivate</button>
+            </div>
+          </div>
+          <div class="puzzle-item">
+            <div class="puzzle-info">
+              <span class="puzzle-name">Puzzle 3: Laser Maze</span>
+              <span class="puzzle-status inactive" id="status3">Inactive</span>
+            </div>
+            <div class="puzzle-actions">
+              <button class="button small" onclick="activatePuzzle(3)">Activate</button>
+              <button class="button small" onclick="deactivatePuzzle(3)">Deactivate</button>
+            </div>
+          </div>
+          <div class="puzzle-item">
+            <div class="puzzle-info">
+              <span class="puzzle-name">Puzzle 4: Final Lock</span>
+              <span class="puzzle-status inactive" id="status4">Inactive</span>
+            </div>
+            <div class="puzzle-actions">
+              <button class="button small" onclick="activatePuzzle(4)">Activate</button>
+              <button class="button small" onclick="deactivatePuzzle(4)">Deactivate</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <h3>System Status</h3>
+        <p class="section-description">Monitor the overall system health and active sessions.</p>
+        <div class="status-indicators">
+          <div class="status-item">
+            <span class="status-label">All Systems:</span>
+            <span class="status-value online">ONLINE</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Active Games:</span>
+            <span class="status-value">3</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Maintenance:</span>
+            <span class="status-value">0 issues</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="back-link">
+    <a href="index.html" class="button secondary">← Back to Home</a>
+  </div>
+
+  <script src="escape-room.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      checkBookingAccess();
+    });
+
+    function checkBookingAccess() {
+      const hasActiveBookings = localStorage.getItem('activeBookings') === 'true';
+      const warning = document.getElementById('accessWarning');
+      const panel = document.querySelector('.panel');
+      if (!hasActiveBookings) {
+        if (warning) warning.style.display = 'block';
+        if (panel) panel.style.display = 'none';
+        return;
+      }
+
+      if (warning) warning.style.display = 'none';
+      if (panel) panel.style.display = 'block';
+    }
+
+    function resetRoom() {
+      const room = document.getElementById('roomSelect').value;
+      if (!room) {
+        alert('Please select a room first');
+        return;
+      }
+      if (confirm(`Reset all puzzles in ${room}? This will restart the game.`)) {
+        alert(`${room} has been reset`);
+      }
+    }
+
+    function lockRoom() {
+      const room = document.getElementById('roomSelect').value;
+      if (!room) {
+        alert('Please select a room first');
+        return;
+      }
+      alert(`${room} has been locked`);
+    }
+
+    function unlockRoom() {
+      const room = document.getElementById('roomSelect').value;
+      if (!room) {
+        alert('Please select a room first');
+        return;
+      }
+      alert(`${room} has been unlocked`);
+    }
+
+    function activatePuzzle(puzzleNum) {
+      const statusElement = document.getElementById(`status${puzzleNum}`);
+      if (statusElement) {
+        statusElement.textContent = 'Active';
+        statusElement.className = 'puzzle-status active';
+      }
+      alert(`Puzzle ${puzzleNum} turned on successfully!`);
+    }
+
+    function deactivatePuzzle(puzzleNum) {
+      const statusElement = document.getElementById(`status${puzzleNum}`);
+      if (statusElement) {
+        statusElement.textContent = 'Inactive';
+        statusElement.className = 'puzzle-status inactive';
+      }
+      alert(`Puzzle ${puzzleNum} turned off.`);
+    }
+  </script>
+</body>
+</html>

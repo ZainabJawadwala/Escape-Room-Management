@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Control - Escape Room Management</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1 class="glitch-flicker">TRACK GAME PROGRESS</h1>
+  <p class="subtitle">Monitor active escape room sessions and team advancement.</p>
+
+  <div class="warning-box" id="accessWarning" style="display: none;">
+    <p>Booking not found. Please book a room first to access live game tracking.</p>
+    <a href="book.html" class="button secondary">Book Now</a>
+  </div>
+
+  <div class="panel">
+    <div class="active-games" id="activeGamesContainer">
+      <!-- Games will be rendered here dynamically -->
+    </div>
+  </div>
+
+  <div class="back-link">
+    <a href="index.html" class="button secondary">← Back to Home</a>
+  </div>
+
+  <script src="escape-room.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      checkBookingAccess();
+      renderTrackedGames();
+    });
+
+    function checkBookingAccess() {
+      const hasActiveBookings = localStorage.getItem('activeBookings') === 'true';
+      const warning = document.getElementById('accessWarning');
+      const panel = document.querySelector('.panel');
+      if (!hasActiveBookings) {
+        if (warning) warning.style.display = 'block';
+        if (panel) panel.style.display = 'none';
+        return;
+      }
+
+      if (warning) warning.style.display = 'none';
+      if (panel) panel.style.display = 'block';
+    }
+
+    function renderTrackedGames() {
+      const container = document.getElementById('activeGamesContainer');
+      if (!container) return;
+
+      const activeGames = gameRegistry.getActiveGames();
+
+      if (activeGames.length === 0) {
+        container.innerHTML = '<p style="text-align: center; padding: 20px; color: #999;">No active games. <a href="book.html" class="button secondary" style="margin-top: 10px;">Book a Room</a></p>';
+        return;
+      }
+
+      // Generate HTML for each active game
+      container.innerHTML = activeGames.map(game => `
+        <div class="game-card">
+          <div class="game-header">
+            <h3>${game.roomName}</h3>
+            <span class="status active">Active</span>
+          </div>
+          <div class="game-details">
+            <p><strong>Team:</strong> ${game.name} (${game.playerCount} players)</p>
+            <p><strong>Email:</strong> ${game.email}</p>
+            <p><strong>Date:</strong> ${game.bookingDate} at ${game.startTime}</p>
+            <p><strong>Time Left:</strong> <span class="timer" data-game-id="${game.id}">${String(game.timeLeft).padStart(2, '0')}:00</span></p>
+            <p><strong>Progress:</strong> ${game.puzzlesSolved}/${game.totalPuzzles} puzzles solved</p>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${game.progress}%"></div>
+            </div>
+          </div>
+          <div class="game-actions">
+            <button class="button small" onclick="sendHint()">Send Hint</button>
+            <button class="button small warning" onclick="stopGame(${game.id})">Stop Game</button>
+          </div>
+        </div>
+      `).join('');
+
+      // Start timer update if not already running
+      if (!window.timerIntervalActive) {
+        startTimerUpdates();
+        window.timerIntervalActive = true;
+      }
+    }
+
+    function startTimerUpdates() {
+      setInterval(() => {
+        const timerElements = document.querySelectorAll('.timer');
+        timerElements.forEach(element => {
+          let time = element.textContent;
+          let [minutes, seconds] = time.split(':').map(Number);
+          seconds--;
+          if (seconds < 0) {
+            seconds = 59;
+            minutes--;
+          }
+          if (minutes < 0) {
+            element.textContent = '00:00';
+            element.style.color = '#ff4444';
+          } else {
+            element.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+          }
+        });
+      }, 1000);
+    }
+
+    function sendHint() {
+      const hint = prompt('Enter hint to send to team:');
+      if (hint) {
+        alert(`Hint sent: "${hint}"`);
+      }
+    }
+
+    function stopGame(gameId) {
+      if (confirm('Are you sure you want to emergency stop this game? This will end the session immediately.')) {
+        gameRegistry.endGame(gameId);
+        alert('Game stopped and registered in history.');
+        renderTrackedGames();
+        
+        if (gameRegistry.getActiveGames().length === 0) {
+          localStorage.removeItem('activeBookings');
+          checkBookingAccess();
+        }
+      }
+    }
+
+    function emergencyStop() {
+      const activeGames = gameRegistry.getActiveGames();
+      if (activeGames.length > 0) {
+        stopGame(activeGames[0].id);
+      }
+    }
+  </script>
+</body>
+</html>

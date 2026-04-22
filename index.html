@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escape Room Management - Home</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1 class="glitch-flicker">ESCAPE ROOM MANAGEMENT</h1>
+  <p class="subtitle">Book rooms, track live games, and manage puzzles in one intuitive workflow.</p>
+
+  <!-- Tab Navigation -->
+  <div class="tab-navigation">
+    <button class="tab-button active" onclick="showTab('book')">📅 Book Rooms</button>
+    <button class="tab-button" onclick="showTab('track')">🎮 Track Games</button>
+    <button class="tab-button" onclick="showTab('manage')">🧩 Manage Puzzles</button>
+  </div>
+
+  <!-- Book Rooms Tab -->
+  <div id="bookTab" class="tab-content active">
+    <div class="panel">
+      <form id="bookingForm">
+        <div class="form-row">
+          <label>
+            Full Name
+            <input id="customerName" class="form-input" type="text" placeholder="Jane Doe" required>
+          </label>
+          <label>
+            Email Address
+            <input id="customerEmail" class="form-input" type="email" placeholder="jane.doe@example.com" required>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label>
+            Room Theme
+            <select id="roomTheme" class="form-input" required>
+              <option value="">Select Room Theme</option>
+              <option value="cryptic">The Cryptic Library</option>
+              <option value="asylum">Abandoned Asylum</option>
+              <option value="quantum">Quantum Laboratory</option>
+              <option value="pharaoh">Pharaoh's Tomb</option>
+              <option value="bunker">Cold War Bunker</option>
+              <option value="market">The Black Market</option>
+            </select>
+          </label>
+          <label>
+            Players
+            <select id="playerCount" class="form-input" required>
+              <option value="">Players (2-6)</option>
+              <option value="2">2 Players</option>
+              <option value="3">3 Players</option>
+              <option value="4">4 Players</option>
+              <option value="5">5 Players</option>
+              <option value="6">6 Players</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label>
+            Booking Date
+            <input id="bookingDate" class="form-input" type="date" required>
+          </label>
+          <label>
+            Start Time
+            <select id="bookingTime" class="form-input" required>
+              <option value="">Select Time</option>
+              <option value="10:00">10:00 AM</option>
+              <option value="14:00">2:00 PM</option>
+              <option value="18:00">6:00 PM</option>
+            </select>
+          </label>
+        </div>
+
+        <button type="submit" class="button primary">Confirm Booking</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Track Games Tab -->
+  <div id="trackTab" class="tab-content">
+    <div class="warning-box" id="trackAccessWarning" style="display: none;">
+      <p>Booking not found. Please book a room first to access live game tracking.</p>
+    </div>
+
+    <div class="panel" id="trackPanel">
+      <div class="active-games">
+        <div class="game-card">
+          <div class="game-header">
+            <h3>The Cryptic Library</h3>
+            <span class="status active">Active</span>
+          </div>
+          <div class="game-details">
+            <p><strong>Team:</strong> Alpha Squad (4 players)</p>
+            <p><strong>Time Left:</strong> <span class="timer">45:23</span></p>
+            <p><strong>Progress:</strong> 3/5 puzzles solved</p>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 60%"></div>
+            </div>
+          </div>
+          <div class="game-actions">
+            <button class="button small" onclick="sendHint()">Send Hint</button>
+            <button class="button small warning" onclick="emergencyStop()">Stop Game</button>
+          </div>
+        </div>
+
+        <div class="game-card">
+          <div class="game-header">
+            <h3>Abandoned Asylum</h3>
+            <span class="status active">Active</span>
+          </div>
+          <div class="game-details">
+            <p><strong>Team:</strong> Ghost Hunters (3 players)</p>
+            <p><strong>Time Left:</strong> <span class="timer">32:15</span></p>
+            <p><strong>Progress:</strong> 2/5 puzzles solved</p>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 40%"></div>
+            </div>
+          </div>
+          <div class="game-actions">
+            <button class="button small" onclick="sendHint()">Send Hint</button>
+            <button class="button small warning" onclick="emergencyStop()">Stop Game</button>
+          </div>
+        </div>
+
+        <div class="game-card">
+          <div class="game-header">
+            <h3>Quantum Laboratory</h3>
+            <span class="status active">Active</span>
+          </div>
+          <div class="game-details">
+            <p><strong>Team:</strong> Science Squad (5 players)</p>
+            <p><strong>Time Left:</strong> <span class="timer">58:47</span></p>
+            <p><strong>Progress:</strong> 4/5 puzzles solved</p>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 80%"></div>
+            </div>
+          </div>
+          <div class="game-actions">
+            <button class="button small" onclick="sendHint()">Send Hint</button>
+            <button class="button small warning" onclick="emergencyStop()">Stop Game</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manage Puzzles Tab -->
+  <div id="manageTab" class="tab-content">
+    <div class="warning-box" id="manageAccessWarning" style="display: none;">
+      <p>Booking not found. Please book a room first to access puzzle management.</p>
+    </div>
+
+    <div class="panel" id="managePanel">
+      <div class="puzzle-controls">
+        <div class="control-section">
+          <h3>Room Controls</h3>
+          <p class="section-description">Choose a room to manage, then use the controls below to prepare it for the next team.</p>
+          <label for="roomSelect">Select Room:</label>
+          <select id="roomSelect" class="form-input">
+            <option value="">Choose a room...</option>
+            <option value="cryptic">The Cryptic Library</option>
+            <option value="asylum">Abandoned Asylum</option>
+            <option value="quantum">Quantum Laboratory</option>
+            <option value="pharaoh">Pharaoh's Tomb</option>
+            <option value="bunker">Cold War Bunker</option>
+            <option value="market">The Black Market</option>
+          </select>
+          <div class="room-actions">
+            <button class="button" onclick="resetRoom()">Reset Room</button>
+            <button class="button" onclick="lockRoom()">Lock Room</button>
+            <button class="button" onclick="unlockRoom()">Unlock Room</button>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <h3>Puzzle Management</h3>
+          <p class="section-description">Control individual puzzles for the selected room. Turn them on/off to guide the team's progress.</p>
+          <div class="puzzle-list">
+            <div class="puzzle-item">
+              <div class="puzzle-info">
+                <span class="puzzle-name">Puzzle 1: Code Lock</span>
+                <span class="puzzle-status inactive" id="status1">Inactive</span>
+              </div>
+              <div class="puzzle-actions">
+                <button class="button small" onclick="activatePuzzle(1)">Activate</button>
+                <button class="button small" onclick="deactivatePuzzle(1)">Deactivate</button>
+              </div>
+            </div>
+            <div class="puzzle-item">
+              <div class="puzzle-info">
+                <span class="puzzle-name">Puzzle 2: Hidden Key</span>
+                <span class="puzzle-status inactive" id="status2">Inactive</span>
+              </div>
+              <div class="puzzle-actions">
+                <button class="button small" onclick="activatePuzzle(2)">Activate</button>
+                <button class="button small" onclick="deactivatePuzzle(2)">Deactivate</button>
+              </div>
+            </div>
+            <div class="puzzle-item">
+              <div class="puzzle-info">
+                <span class="puzzle-name">Puzzle 3: Laser Maze</span>
+                <span class="puzzle-status inactive" id="status3">Inactive</span>
+              </div>
+              <div class="puzzle-actions">
+                <button class="button small" onclick="activatePuzzle(3)">Activate</button>
+                <button class="button small" onclick="deactivatePuzzle(3)">Deactivate</button>
+              </div>
+            </div>
+            <div class="puzzle-item">
+              <div class="puzzle-info">
+                <span class="puzzle-name">Puzzle 4: Final Lock</span>
+                <span class="puzzle-status inactive" id="status4">Inactive</span>
+              </div>
+              <div class="puzzle-actions">
+                <button class="button small" onclick="activatePuzzle(4)">Activate</button>
+                <button class="button small" onclick="deactivatePuzzle(4)">Deactivate</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <h3>System Status</h3>
+          <p class="section-description">Monitor the overall system health and active sessions.</p>
+          <div class="status-indicators">
+            <div class="status-item">
+              <span class="status-label">All Systems:</span>
+              <span class="status-value online">ONLINE</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Active Games:</span>
+              <span class="status-value">3</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Maintenance:</span>
+              <span class="status-value">0 issues</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="escape-room.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      checkActiveSessions();
+      enhanceForm();
+    });
+
+    function showTab(tabName) {
+      // Hide all tabs
+      const tabs = document.querySelectorAll('.tab-content');
+      tabs.forEach(tab => tab.classList.remove('active'));
+
+      // Remove active class from all buttons
+      const buttons = document.querySelectorAll('.tab-button');
+      buttons.forEach(button => button.classList.remove('active'));
+
+      // Show selected tab
+      document.getElementById(tabName + 'Tab').classList.add('active');
+
+      // Add active class to clicked button
+      event.target.classList.add('active');
+    }
+
+    function checkActiveSessions() {
+      // Check if there are active bookings (stored in localStorage)
+      const hasActiveBookings = localStorage.getItem('activeBookings') === 'true';
+
+      const trackWarning = document.getElementById('trackAccessWarning');
+      const trackPanel = document.getElementById('trackPanel');
+      const manageWarning = document.getElementById('manageAccessWarning');
+      const managePanel = document.getElementById('managePanel');
+
+      if (!hasActiveBookings) {
+        if (trackWarning) trackWarning.style.display = 'block';
+        if (trackPanel) trackPanel.style.display = 'none';
+        if (manageWarning) manageWarning.style.display = 'block';
+        if (managePanel) managePanel.style.display = 'none';
+      } else {
+        if (trackWarning) trackWarning.style.display = 'none';
+        if (trackPanel) trackPanel.style.display = 'block';
+        if (manageWarning) manageWarning.style.display = 'none';
+        if (managePanel) managePanel.style.display = 'block';
+      }
+    }
+
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Get form data by element ID for clear, stable logic
+      const name = document.getElementById('customerName').value;
+      const email = document.getElementById('customerEmail').value;
+      const room = document.getElementById('roomTheme').selectedOptions[0].text;
+      const roomTheme = document.getElementById('roomTheme').value;
+      const players = document.getElementById('playerCount').selectedOptions[0].text;
+      const playerCount = document.getElementById('playerCount').value;
+      const date = document.getElementById('bookingDate').value;
+      const time = document.getElementById('bookingTime').selectedOptions[0].text;
+
+      // Add visual feedback
+      const button = this.querySelector('.button');
+      button.style.animation = 'none';
+      setTimeout(() => {
+        button.style.animation = 'pulse 0.5s ease-in-out';
+      }, 10);
+
+      // Register the game with new system
+      const bookingData = {
+        customerName: name,
+        customerEmail: email,
+        room: room,
+        roomTheme: roomTheme,
+        players: players,
+        playerCount: playerCount,
+        date: date,
+        time: time
+      };
+      
+      const registeredGame = gameRegistry.registerGame(bookingData);
+
+      // Set active booking flag and store latest booking summary
+      localStorage.setItem('activeBookings', 'true');
+      localStorage.setItem('latestBooking', JSON.stringify({ name, email, room, players, date, time }));
+
+      alert(`Booking confirmed! Game registered for ${name}. You can now track games and manage puzzles.`);
+      
+      // Reset form
+      this.reset();
+      
+      checkActiveSessions();
+      renderTrackedGames();
+    });
+
+    function sendHint() {
+      const hint = prompt('Enter hint to send to team:');
+      if (hint) {
+        alert(`Hint sent: "${hint}"`);
+      }
+    }
+
+    function emergencyStop() {
+      if (confirm('Are you sure you want to stop this game?')) {
+        const activeGames = gameRegistry.getActiveGames();
+        if (activeGames.length > 0) {
+          // End the first/current game
+          gameRegistry.endGame(activeGames[0].id);
+          alert('Game stopped and registered in history.');
+          renderTrackedGames();
+        }
+      }
+    }
+
+    // Function to render tracked games dynamically
+    function renderTrackedGames() {
+      const activeGamesContainer = document.querySelector('.active-games');
+      if (!activeGamesContainer) return;
+
+      const activeGames = gameRegistry.getActiveGames();
+
+      if (activeGames.length === 0) {
+        activeGamesContainer.innerHTML = '<p style="text-align: center; padding: 20px; color: #999;">No active games. Book a room to start tracking!</p>';
+        return;
+      }
+
+      // Generate HTML for each active game
+      activeGamesContainer.innerHTML = activeGames.map(game => `
+        <div class="game-card">
+          <div class="game-header">
+            <h3>${game.roomName}</h3>
+            <span class="status active">Active</span>
+          </div>
+          <div class="game-details">
+            <p><strong>Team:</strong> ${game.name} (${game.playerCount} players)</p>
+            <p><strong>Email:</strong> ${game.email}</p>
+            <p><strong>Date:</strong> ${game.bookingDate} at ${game.startTime}</p>
+            <p><strong>Time Left:</strong> <span class="timer" data-game-id="${game.id}">${game.timeLeft}:00</span></p>
+            <p><strong>Progress:</strong> ${game.puzzlesSolved}/${game.totalPuzzles} puzzles solved</p>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${game.progress}%"></div>
+            </div>
+          </div>
+          <div class="game-actions">
+            <button class="button small" onclick="sendHint()">Send Hint</button>
+            <button class="button small warning" onclick="emergencyStop()">Stop Game</button>
+          </div>
+        </div>
+      `).join('');
+
+      // Start timer update if not already running
+      if (!window.timerIntervalActive) {
+        startTimerUpdates();
+        window.timerIntervalActive = true;
+      }
+    }
+
+    function startTimerUpdates() {
+      setInterval(() => {
+        const timerElements = document.querySelectorAll('.timer');
+        timerElements.forEach(element => {
+          let time = element.textContent;
+          let [minutes, seconds] = time.split(':').map(Number);
+          seconds--;
+          if (seconds < 0) {
+            seconds = 59;
+            minutes--;
+          }
+          if (minutes < 0) {
+            element.textContent = '00:00';
+            element.style.color = '#ff4444';
+          } else {
+            element.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+          }
+        });
+      }, 1000);
+    }
+
+    // Render games on initial load
+    window.addEventListener('DOMContentLoaded', function() {
+      renderTrackedGames();
+    });
+
+    function resetRoom() {
+      const room = document.getElementById('roomSelect').value;
+      if (!room) {
+        alert('Please select a room first');
+        return;
+      }
+      if (confirm(`Reset all puzzles in ${room}? This will restart the game.`)) {
+        alert(`${room} has been reset`);
+      }
+    }
+
+    function lockRoom() {
+      const room = document.getElementById('roomSelect').value;
+      if (!room) {
+        alert('Please select a room first');
+        return;
+      }
+      alert(`${room} has been locked`);
+    }
+
+    function unlockRoom() {
+      const room = document.getElementById('roomSelect').value;
+      if (!room) {
+        alert('Please select a room first');
+        return;
+      }
+      alert(`${room} has been unlocked`);
+    }
+
+    function activatePuzzle(puzzleNum) {
+      const statusElement = document.getElementById(`status${puzzleNum}`);
+      if (statusElement) {
+        statusElement.textContent = 'Active';
+        statusElement.className = 'puzzle-status active';
+      }
+      alert(`Puzzle ${puzzleNum} turned on successfully!`);
+    }
+
+    function deactivatePuzzle(puzzleNum) {
+      const statusElement = document.getElementById(`status${puzzleNum}`);
+      if (statusElement) {
+        statusElement.textContent = 'Inactive';
+        statusElement.className = 'puzzle-status inactive';
+      }
+      alert(`Puzzle ${puzzleNum} turned off.`);
+    }
+  </script>
+</body>
+</html>
+ 
